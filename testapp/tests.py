@@ -26,3 +26,5 @@ from .django_model_tests.update_only_fields.tests import *
 from .django_model_tests.update_only_fields.models import *
 from .django_model_tests.ordering.tests import *
 from .django_model_tests.ordering.models import *
+
+from .django_form_tests.model_formset_tests import ModelFormsetTest

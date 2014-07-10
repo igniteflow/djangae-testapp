@@ -11,7 +11,10 @@ https://docs.djangoproject.com/en/dev/ref/settings/
 from djangae.settings_base import *
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import logging
 import os
+import sys
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -31,7 +34,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'djangae.contrib.auth',
@@ -44,7 +47,7 @@ INSTALLED_APPS = (
     'django.contrib.formtools',
     'djangae',
     'testapp'
-)
+]
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -92,3 +95,23 @@ STATIC_URL = '/static/'
 AUTH_USER_MODEL = 'djangae.User'
 GENERATE_SPECIAL_INDEXES_DURING_TESTING = True
 COMPLETE_FLUSH_WHILE_TESTING = True
+
+if len(sys.argv) > 1 and sys.argv[1] == 'test':
+    TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+    NOSE_ARGS = [
+        '--logging-clear-handlers',
+        '--verbosity=1'
+    ]
+
+    logging.disable(logging.CRITICAL)
+    INSTALLED_APPS.append('django_nose')
+    DEBUG = False
+    TEMPLATE_DEBUG = False
+    PASSWORD_HASHERS = (
+        'django.contrib.auth.hashers.MD5PasswordHasher',
+    )
+
+    if len(sys.argv) == 2:
+        # ./manage.py test is being run without arguments
+        # so add the default apps
+        NOSE_ARGS += ['testapp']
